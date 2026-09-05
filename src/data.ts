@@ -1,4 +1,4 @@
-import { User, Post, Business, Leader, Notification, Story, Reel, RegisteredAccount } from './types';
+import { User, Post, Business, Leader, Notification, Story, Reel, RegisteredAccount, Song } from './types';
 
 export const currentUser: User = {
   id: 'current_user_1',
@@ -8,19 +8,36 @@ export const currentUser: User = {
   isVerified: true,
   verificationType: 'Elite',
   membershipLevel: 'Founder Board',
-  bio: 'Venture Capitalist | Apne samaj ke AgriTech aur real-estate startups ko support karne me dedicated. Haryana se roots hain, building global systems.',
+  bio: '👑 Supreme Founder & Patron-in-Chief, Jaat Samiti | Venture Capitalist & AgriTech Empire | Haryana to Global Roots.',
   location: 'New Delhi & London',
-  followersCount: 1420,
+  phone: '+91 98112-99881',
+  joinedDate: '15 Jan 2026',
+  status: 'Super Admin',
+  anthemSong: 'Systummm Pe Systummm (Haryanvi Bass Remix)',
+  followersCount: 15400,
   followingCount: 382,
-  invitesRemaining: 3,
+  invitesRemaining: 99,
   invitesSent: [
     { email: 'digvijay.ahlawat@gmail.com', date: '2026-06-15', status: 'Joined' },
     { email: 'ananya.chaudhary@outlook.com', date: '2026-07-02', status: 'Pending' },
   ],
-  postsCount: 12,
+  postsCount: 14,
+  savedPostIds: ['post_1', 'post_2']
 };
 
 export const mockLeaders: Leader[] = [
+  {
+    id: 'leader_founder_jaswant',
+    name: 'Jaswant Jaat',
+    role: 'Supreme Founder & Patron-in-Chief, Jaat Samiti',
+    avatar: 'https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=400&h=400&q=80',
+    bio: 'Jaat Samiti ke Pramukh Sansthaapak (Founder). Samaj ke youth, kisaani, sports aur global business network ko digital takat se jodne wale visionary.',
+    achievement: 'Mukhya Sansthaapak, Jaat Samiti. AgriTech, Realty aur Youth Akhada Network ke global patron.',
+    category: 'Public Service',
+    isVerified: true,
+    username: 'jaswant_jaat',
+    followersCount: 15400,
+  },
   {
     id: 'leader_1',
     name: 'Chaudhary Charan Singh',
@@ -435,21 +452,25 @@ export const defaultRegisteredAccounts: RegisteredAccount[] = [
     name: 'Jaswant Jaat',
     username: 'jaswant_jaat',
     email: 'jaswant@jaatsamiti.com',
+    phone: '+91 98112-99881',
     password: 'password123',
     avatar: 'https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=400&h=400&q=80',
     isVerified: true,
     verificationType: 'Elite',
     membershipLevel: 'Founder Board',
-    bio: 'Venture Capitalist & Tech Investor | AgriTech & Real Estate | Haryana roots, global scale 👑',
+    bio: '👑 Supreme Founder & Patron-in-Chief, Jaat Samiti | Venture Capitalist & AgriTech Empire | Haryana roots, global scale 👑',
     location: 'New Delhi & London',
-    followersCount: 1420,
+    joinedDate: '15 Jan 2026',
+    status: 'Super Admin',
+    anthemSong: 'Systummm Pe Systummm (Haryanvi Bass Remix)',
+    followersCount: 15400,
     followingCount: 382,
-    invitesRemaining: 3,
+    invitesRemaining: 99,
     invitesSent: [
       { email: 'digvijay.ahlawat@gmail.com', date: '2026-06-15', status: 'Joined' },
       { email: 'ananya.chaudhary@outlook.com', date: '2026-07-02', status: 'Pending' },
     ],
-    postsCount: 12,
+    postsCount: 14,
     savedPostIds: ['post_1', 'post_2']
   },
   {
@@ -457,6 +478,7 @@ export const defaultRegisteredAccounts: RegisteredAccount[] = [
     name: 'Nihal Jaat',
     username: 'nihal_jaat',
     email: 'nihal@jaatsamiti.com',
+    phone: '+91 98765-43210',
     password: 'password123',
     avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&h=400&q=80',
     isVerified: true,
@@ -464,6 +486,9 @@ export const defaultRegisteredAccounts: RegisteredAccount[] = [
     membershipLevel: 'Founder Board',
     bio: 'Founder Board | Sports & Akhada Patron | Preserving ancient wrestling & youth empowerment 🚩',
     location: 'Rohtak & Chandigarh',
+    joinedDate: '18 Jan 2026',
+    status: 'Active',
+    anthemSong: 'Dangal Title Track (Daler Mehndi)',
     followersCount: 3890,
     followingCount: 240,
     invitesRemaining: 5,
@@ -476,6 +501,7 @@ export const defaultRegisteredAccounts: RegisteredAccount[] = [
     name: 'Nitesh Jaat',
     username: 'nitesh_jaat',
     email: 'nitesh@jaatsamiti.com',
+    phone: '+91 99100-55443',
     password: 'password123',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80',
     isVerified: true,
@@ -483,6 +509,9 @@ export const defaultRegisteredAccounts: RegisteredAccount[] = [
     membershipLevel: 'Founder Board',
     bio: 'Founder Board | Automotive & Logistics Empire | Speed, Heritage & Brotherhood 🔥',
     location: 'Gurugram & Western UP',
+    joinedDate: '20 Jan 2026',
+    status: 'Active',
+    anthemSong: 'Jaat Da Muqabla (High Energy)',
     followersCount: 4520,
     followingCount: 195,
     invitesRemaining: 4,
@@ -495,6 +524,7 @@ export const defaultRegisteredAccounts: RegisteredAccount[] = [
     name: 'Dr. Ananya Chaudhary',
     username: 'ananya_agritech',
     email: 'ananya@agritech.org',
+    phone: '+91 98223-11002',
     password: 'password123',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&h=400&q=80',
     isVerified: true,
@@ -502,12 +532,127 @@ export const defaultRegisteredAccounts: RegisteredAccount[] = [
     membershipLevel: 'Elite Patron',
     bio: 'Genetics Scientist & Biotech Founder | Organic Soil Regeneration & Drone Farming',
     location: 'Meerut & Bangalore',
+    joinedDate: '01 Feb 2026',
+    status: 'Active',
+    anthemSong: 'Kisan Anthem (Diljit & Kanwar)',
     followersCount: 2150,
     followingCount: 410,
     invitesRemaining: 2,
     invitesSent: [],
     postsCount: 8,
     savedPostIds: []
+  },
+  {
+    id: 'user_digvijay',
+    name: 'Digvijay Ahlawat',
+    username: 'digvijay_ahlawat',
+    email: 'digvijay.ahlawat@gmail.com',
+    phone: '+91 98104-77112',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&h=400&q=80',
+    isVerified: true,
+    verificationType: 'Elite',
+    membershipLevel: 'Gold Club',
+    bio: 'High Court Senior Advocate & Constitutional Counsel | Protecting Agrarian Land Rights',
+    location: 'Chandigarh & Rohtak',
+    joinedDate: '10 Feb 2026',
+    status: 'Active',
+    anthemSong: '295 - Sidhu Moosewala Tribute',
+    followersCount: 1820,
+    followingCount: 140,
+    invitesRemaining: 3,
+    invitesSent: [],
+    postsCount: 5,
+    savedPostIds: []
+  },
+  {
+    id: 'user_sunita',
+    name: 'Sunita Malik',
+    username: 'sunita_wrestling',
+    email: 'sunita.malik@olympics.in',
+    phone: '+91 97291-88220',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1594744803329-e58b31de215f?auto=format&fit=crop&w=400&h=400&q=80',
+    isVerified: true,
+    verificationType: 'Legend',
+    membershipLevel: 'Elite Patron',
+    bio: 'Commonwealth Gold Medalist | Women Wrestling Coach | Haryana Sports Foundation',
+    location: 'Sonipat & Hisar',
+    joinedDate: '14 Feb 2026',
+    status: 'Active',
+    anthemSong: 'Dangal Title Track',
+    followersCount: 6300,
+    followingCount: 95,
+    invitesRemaining: 6,
+    invitesSent: [],
+    postsCount: 11,
+    savedPostIds: []
+  }
+];
+
+export const initialSongs: Song[] = [
+  {
+    id: 'song_1',
+    title: 'Systummm Pe Systummm',
+    artist: 'Haryanvi Bass Crew & Desi Beats',
+    coverUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=300&h=300&q=80',
+    duration: '6:12',
+    category: 'Trending',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+  },
+  {
+    id: 'song_2',
+    title: '295 (Jaat Legacy Tribute)',
+    artist: 'Sidhu Moosewala & The Brotherhood',
+    coverUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=300&h=300&q=80',
+    duration: '7:05',
+    category: 'Trending',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+  },
+  {
+    id: 'song_3',
+    title: 'Kisan Anthem - Kisaani Pride',
+    artist: 'Diljit Dosanjh & Kanwar Grewal',
+    coverUrl: 'https://images.unsplash.com/photo-1595856417767-1750275988e0?auto=format&fit=crop&w=300&h=300&q=80',
+    duration: '5:44',
+    category: 'Kisaani',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+  },
+  {
+    id: 'song_4',
+    title: 'Dangal Asli Taakat',
+    artist: 'Daler Mehndi (Akhada Mix)',
+    coverUrl: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=300&h=300&q=80',
+    duration: '5:02',
+    category: 'Akhada',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+  },
+  {
+    id: 'song_5',
+    title: 'Lohagarh Ajey Fort Anthem',
+    artist: 'Maharaja Surajmal Heritage Rhythms',
+    coverUrl: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=300&h=300&q=80',
+    duration: '4:30',
+    category: 'Royal',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
+  },
+  {
+    id: 'song_6',
+    title: 'Jaat Da Muqabla - Royal Edition',
+    artist: 'Desi Folk & Heavy Bass 808',
+    coverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80',
+    duration: '5:52',
+    category: 'Trending',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3'
+  },
+  {
+    id: 'song_7',
+    title: 'Bholenath Trance Beat',
+    artist: 'Shiva Beats & Dholak Masters',
+    coverUrl: 'https://images.unsplash.com/photo-1627581534960-9dfd4a2fa3ea?auto=format&fit=crop&w=300&h=300&q=80',
+    duration: '6:35',
+    category: 'Akhada',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3'
   }
 ];
 

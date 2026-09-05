@@ -12,7 +12,10 @@ import {
   Clapperboard,
   PlusSquare,
   Users,
-  LogIn
+  LogIn,
+  LogOut,
+  Music,
+  Crown
 } from 'lucide-react';
 import { User as UserType } from '../types';
 import siteLogo from '../assets/images/site_logo.jpg';
@@ -28,6 +31,7 @@ interface SidebarProps {
   hasUnreadMessages: boolean;
   onOpenAuthModal?: () => void;
   onOpenCreatePost?: () => void;
+  onLogout?: () => void;
 }
 
 export default function Sidebar({
@@ -40,16 +44,29 @@ export default function Sidebar({
   unreadNotificationsCount = 0,
   hasUnreadMessages,
   onOpenAuthModal,
-  onOpenCreatePost
+  onOpenCreatePost,
+  onLogout
 }: SidebarProps) {
+  const isFounder = user.username === 'jaswant_jaat' || user.membershipLevel === 'Founder Board';
+
   const navItems = [
     { id: 'feed', label: 'Feed (Home)', icon: Home },
     { id: 'explore', label: 'Explore (Search)', icon: Search },
     { id: 'reels', label: 'Reels (Videos)', icon: Clapperboard },
+    { id: 'music', label: 'Gane (Music Lounge)', icon: Music },
     { id: 'heritage', label: 'Dharohar & Itihas', icon: Compass },
     { id: 'directory', label: 'Vyapaar Network', icon: Briefcase },
     { id: 'profile', label: 'Apni Profile', icon: User },
   ];
+
+  if (isFounder) {
+    // Insert Founder Console right before Profile
+    navItems.splice(navItems.length - 1, 0, {
+      id: 'founder',
+      label: '👑 Founder Console',
+      icon: Crown
+    });
+  }
 
   return (
     <>
@@ -203,6 +220,19 @@ export default function Sidebar({
             </button>
           )}
 
+          {/* Instagram Gate / Logout button */}
+          {onLogout && (
+            <button
+              id="sidebar-logout-btn"
+              onClick={onLogout}
+              className="w-full py-1.5 px-2.5 rounded-lg border border-slate-200 hover:border-rose-400 bg-slate-50 hover:bg-rose-50/50 text-[11px] font-medium text-slate-700 hover:text-rose-900 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              title="Instagram login page par wapas jayein"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-600" />
+              <span>Instagram Login Gate / Logout</span>
+            </button>
+          )}
+
           <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200/90 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Sparkles className="w-3 h-3 text-amber-600" />
@@ -261,6 +291,18 @@ export default function Sidebar({
         >
           <Clapperboard className="w-5 h-5" />
           <span className="text-[9px] font-display tracking-tight font-medium">Reels</span>
+        </button>
+
+        {/* Music Lounge */}
+        <button
+          id="mobile-nav-item-music"
+          onClick={() => setCurrentTab('music')}
+          className={`flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg outline-none transition-all ${
+            currentTab === 'music' ? 'text-amber-700 font-bold' : 'text-slate-500'
+          }`}
+        >
+          <Music className="w-5 h-5" />
+          <span className="text-[9px] font-display tracking-tight font-medium">Gane</span>
         </button>
 
         {/* Profile */}

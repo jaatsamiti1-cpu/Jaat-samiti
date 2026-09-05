@@ -14,6 +14,10 @@ export interface User {
   invitesSent: Array<{ email: string; date: string; status: 'Pending' | 'Joined' }>;
   postsCount: number;
   savedPostIds?: string[];
+  phone?: string;
+  joinedDate?: string;
+  anthemSong?: string;
+  status?: 'Active' | 'Super Admin' | 'Pending Review';
 }
 
 export interface Comment {
@@ -122,5 +126,17 @@ export interface Reel {
 export interface RegisteredAccount extends User {
   password?: string;
   email?: string;
+  phone?: string;
   savedPostIds?: string[];
+}
+
+export interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  coverUrl: string;
+  audioUrl?: string;
+  duration: string;
+  category: 'Trending' | 'Akhada' | 'Kisaani' | 'Royal' | 'Custom';
+  addedBy?: string;
 }

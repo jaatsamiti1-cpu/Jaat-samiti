@@ -18,7 +18,10 @@ import {
   AlertCircle,
   Bell,
   Plus,
-  LogIn
+  LogIn,
+  LogOut,
+  Music,
+  Crown
 } from 'lucide-react';
 
 import { 
@@ -30,9 +33,10 @@ import {
   initialNotifications,
   initialStories,
   initialReels,
-  defaultRegisteredAccounts
+  defaultRegisteredAccounts,
+  initialSongs
 } from './data';
-import { Notification, Story, Reel, RegisteredAccount, Post, User } from './types';
+import { Notification, Story, Reel, RegisteredAccount, Post, User, Song } from './types';
 
 import Sidebar from './components/Sidebar';
 import FeedSection from './components/FeedSection';
@@ -47,6 +51,10 @@ import StoryViewer from './components/StoryViewer';
 import RightSidebar from './components/RightSidebar';
 import DMsDrawer from './components/DMsDrawer';
 import NotificationsDrawer from './components/NotificationsDrawer';
+import InstagramAuthGate from './components/InstagramAuthGate';
+import MusicSection from './components/MusicSection';
+import FloatingMusicPlayer from './components/FloatingMusicPlayer';
+import FounderConsole from './components/FounderConsole';
 import siteLogo from './assets/images/site_logo.jpg';
 
 export default function App() {
@@ -154,6 +162,69 @@ export default function App() {
     localStorage.setItem('jaat_samiti_saved_post_ids', JSON.stringify(savedPostIds));
   }, [savedPostIds]);
 
+  // Instagram Gate: When user opens website, show Instagram Login / Signup screen
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('jaat_samiti_authenticated');
+      // If user hasn't explicitly logged in, default to false so Instagram login appears first!
+      return saved === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Songs and Audio State with automatic cache migration for reliable MP3 streams
+  const [songs, setSongs] = useState<Song[]>(() => {
+    try {
+      const saved = localStorage.getItem('jaat_samiti_songs');
+      if (!saved) return initialSongs;
+      const parsed: Song[] = JSON.parse(saved);
+      // Migrate old placeholder sound effect URLs to full musical MP3 streams
+      const upgraded = parsed.map(song => {
+        const defaultMatch = initialSongs.find(d => d.id === song.id);
+        if (defaultMatch && (
+          !song.audioUrl || 
+          song.audioUrl.includes('actions.google.com') || 
+          song.audioUrl.endsWith('.ogg')
+        )) {
+          return { ...song, audioUrl: defaultMatch.audioUrl, duration: defaultMatch.duration };
+        }
+        return song;
+      });
+      return upgraded;
+    } catch {
+      return initialSongs;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('jaat_samiti_songs', JSON.stringify(songs));
+  }, [songs]);
+
+  // Active audio player state
+  const [currentSong, setCurrentSong] = useState<Song | null>(() => {
+    try {
+      const saved = localStorage.getItem('jaat_samiti_current_song');
+      if (!saved) return initialSongs[0];
+      const parsed = JSON.parse(saved);
+      if (!parsed.audioUrl || parsed.audioUrl.includes('actions.google.com') || parsed.audioUrl.endsWith('.ogg')) {
+        const match = initialSongs.find(d => d.id === parsed.id) || initialSongs[0];
+        return match;
+      }
+      return parsed;
+    } catch {
+      return initialSongs[0];
+    }
+  });
+
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentSong) {
+      localStorage.setItem('jaat_samiti_current_song', JSON.stringify(currentSong));
+    }
+  }, [currentSong]);
+
   // Modals
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
@@ -257,6 +328,118 @@ export default function App() {
     setTimeout(() => {
       setToast((prev) => (prev?.id === id ? null : prev));
     }, 4000);
+  };
+
+  // Music & Audio Handlers
+  const handlePlaySong = (song: Song) => {
+    setCurrentSong(song);
+    setIsPlaying(true);
+    showToast(`▶️ Baj raha hai: "${song.title}" (${song.artist})`);
+  };
+
+  const handleTogglePlay = () => {
+    setIsPlaying(prev => !prev);
+  };
+
+  const handleNextSong = () => {
+    if (!currentSong || songs.length === 0) return;
+    const currentIndex = songs.findIndex(s => s.id === currentSong.id);
+    const nextIndex = (currentIndex + 1) % songs.length;
+    setCurrentSong(songs[nextIndex]);
+    setIsPlaying(true);
+  };
+
+  const handlePrevSong = () => {
+    if (!currentSong || songs.length === 0) return;
+    const currentIndex = songs.findIndex(s => s.id === currentSong.id);
+    const prevIndex = (currentIndex - 1 + songs.length) % songs.length;
+    setCurrentSong(songs[prevIndex]);
+    setIsPlaying(true);
+  };
+
+  const handleAddSong = (newSong: Song) => {
+    setSongs(prev => [newSong, ...prev]);
+    showToast(`🎵 "${newSong.title}" safalta-purvak library me jud gaya hai!`);
+  };
+
+  const handleResetDefaultSongs = () => {
+    setSongs(initialSongs);
+    setCurrentSong(initialSongs[0]);
+    localStorage.setItem('jaat_samiti_songs', JSON.stringify(initialSongs));
+    localStorage.setItem('jaat_samiti_current_song', JSON.stringify(initialSongs[0]));
+    showToast('🔄 Sabhi 7 original hit gane successfully restore ho gaye hain!');
+  };
+
+  const handleSetProfileAnthem = (song: Song) => {
+    setCurrentUser((prev: typeof initialUser) => ({
+      ...prev,
+      anthemSong: `${song.title} - ${song.artist}`
+    }));
+    showToast(`👑 "${song.title}" ko aapka official profile gana (Anthem) set kar diya gaya hai!`);
+  };
+
+  // Instagram Auth Handlers
+  const handleAuthLogin = (account: RegisteredAccount) => {
+    const userObj: User = {
+      name: account.name,
+      username: account.username,
+      avatar: account.avatar,
+      bio: account.bio || 'Samaj Founder Board & Jaat Samiti Sadasya.',
+      location: account.location || 'Haryana, Bharat',
+      followingCount: account.followingCount || 280,
+      followersCount: account.followersCount || 1420,
+      postsCount: posts.filter(p => p.author.username === account.username).length || 18,
+      invitesRemaining: 5,
+      invitesSent: [],
+      isVerified: account.isVerified,
+      verificationType: account.verificationType,
+      membershipLevel: account.membershipLevel,
+      phone: account.phone,
+      joinedDate: account.joinedDate,
+      anthemSong: account.anthemSong || 'Systummm Pe Systummm (Haryanvi Bass)'
+    };
+    setCurrentUser(userObj);
+    setIsAuthenticated(true);
+    localStorage.setItem('jaat_samiti_authenticated', 'true');
+    showToast(`✨ Swagat hai, @${account.username}! Login safalta-purvak ho gaya.`);
+  };
+
+  const handleAuthSignUp = (newAccount: RegisteredAccount) => {
+    setAccounts(prev => [newAccount, ...prev]);
+    const userObj: User = {
+      name: newAccount.name,
+      username: newAccount.username,
+      avatar: newAccount.avatar,
+      bio: newAccount.bio || 'Proud member of Jaat Samaj network.',
+      location: newAccount.location || 'Haryana, Bharat',
+      followingCount: 1,
+      followersCount: 0,
+      postsCount: 0,
+      invitesRemaining: 5,
+      invitesSent: [],
+      isVerified: newAccount.isVerified,
+      verificationType: newAccount.verificationType,
+      membershipLevel: newAccount.membershipLevel,
+      phone: newAccount.phone,
+      joinedDate: newAccount.joinedDate,
+      anthemSong: newAccount.anthemSong || 'Surajmal Shaurya Gatha - Desi Dhol'
+    };
+    setCurrentUser(userObj);
+    setIsAuthenticated(true);
+    localStorage.setItem('jaat_samiti_authenticated', 'true');
+    showToast(`🎉 Mubarak ho @${newAccount.username}! Aapka Instagram account ban gaya hai.`);
+  };
+
+  const handleAuthGuestAccess = () => {
+    setIsAuthenticated(true);
+    localStorage.setItem('jaat_samiti_authenticated', 'true');
+    showToast('👋 Mehman ke roop me preview mode shuru ho gaya.');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.setItem('jaat_samiti_authenticated', 'false');
+    showToast('👋 Logout ho gaye. Instagram Login gate par redirect kiya gaya.');
   };
 
   // Toggle follow status of any username (author/owner/leader)
@@ -571,6 +754,49 @@ export default function App() {
             currentUser={currentUser}
           />
         );
+      case 'music':
+        return (
+          <MusicSection
+            songs={songs}
+            currentPlayingSong={currentSong}
+            isPlaying={isPlaying}
+            onPlaySong={handlePlaySong}
+            onPauseSong={handleTogglePlay}
+            onAddSong={handleAddSong}
+            onSetProfileAnthem={(songTitle: string) => {
+              setCurrentUser((prev: typeof initialUser) => ({
+                ...prev,
+                anthemSong: songTitle
+              }));
+              showToast(`👑 "${songTitle}" ko aapka official profile anthem set kar diya gaya hai!`);
+            }}
+            onShowToast={showToast}
+            onResetDefaultSongs={handleResetDefaultSongs}
+            currentUser={currentUser}
+          />
+        );
+      case 'founder':
+        return (
+          <FounderConsole
+            accounts={accounts}
+            currentUser={currentUser}
+            onShowToast={showToast}
+            onNavigateToFeed={() => setCurrentTab('feed')}
+            onSendBroadcast={(msg) => {
+              const newNotif: Notification = {
+                id: `broadcast_${Date.now()}`,
+                type: 'verification_approve',
+                senderName: 'Jaswant Jaat (Founder)',
+                senderAvatar: currentUser.avatar,
+                message: msg,
+                timestamp: 'Abhi',
+                read: false
+              };
+              setNotifications(prev => [newNotif, ...prev]);
+              showToast('📢 Broadcast sandesh sabhi sadasyon ko bhej diya gaya!');
+            }}
+          />
+        );
       case 'profile':
         return (
           <ProfileSection 
@@ -580,12 +806,48 @@ export default function App() {
             onShowToast={showToast} 
             onOpenAuthModal={() => setIsAuthModalOpen(true)}
             savedPosts={posts.filter(p => savedPostIds.includes(p.id))}
+            onNavigateToFounderConsole={() => setCurrentTab('founder')}
+            onNavigateToMusic={() => setCurrentTab('music')}
+            currentPlayingSong={currentSong}
+            isPlaying={isPlaying}
+            onToggleSong={handleTogglePlay}
           />
         );
       default:
         return null;
     }
   };
+
+  // 1. Instagram Auth Gate: If user opens website and is not authenticated, show Instagram Login / Signup immediately
+  if (!isAuthenticated) {
+    return (
+      <div id="app-root" className="bg-slate-50 min-h-screen text-slate-900 font-sans">
+        <InstagramAuthGate
+          accounts={accounts}
+          onLogin={handleAuthLogin}
+          onSignUp={handleAuthSignUp}
+          onGuestAccess={handleAuthGuestAccess}
+          onShowToast={showToast}
+        />
+        
+        {/* Floating toast notification */}
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              id="auth-toast-alert"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs px-4 py-3 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-2.5 max-w-md font-medium"
+            >
+              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>{toast.message}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
 
   return (
     <div id="app-root" className="bg-slate-100/70 text-slate-900 min-h-screen font-sans selection:bg-amber-500/20 selection:text-amber-900">
@@ -609,6 +871,7 @@ export default function App() {
           unreadNotificationsCount={unreadNotificationsCount}
           onOpenAuthModal={() => setIsAuthModalOpen(true)}
           onOpenCreatePost={() => setIsCreatePostModalOpen(true)}
+          onLogout={handleLogout}
         />
 
         {/* Center Main Scrolling Core Window */}
@@ -684,6 +947,16 @@ export default function App() {
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
+              </button>
+
+              {/* Mobile Instagram Gate / Logout */}
+              <button
+                id="mobile-auth-logout-btn"
+                onClick={handleLogout}
+                className="relative flex items-center justify-center w-8 h-8 rounded-full bg-rose-50 border border-rose-200 text-rose-700 active:scale-95 transition-transform cursor-pointer"
+                title="Instagram Login / Logout"
+              >
+                <LogOut className="w-3.5 h-3.5" />
               </button>
             </div>
           </header>
@@ -773,6 +1046,17 @@ export default function App() {
           onShowToast={showToast}
         />
       )}
+
+      {/* Persistent Floating Music Player (Gane Playback) */}
+      <FloatingMusicPlayer
+        currentSong={currentSong}
+        isPlaying={isPlaying}
+        onTogglePlay={handleTogglePlay}
+        onNext={handleNextSong}
+        onPrev={handlePrevSong}
+        onClose={() => setCurrentSong(null)}
+        onOpenMusicSection={() => setCurrentTab('music')}
+      />
 
       {/* Interactive, glowing custom Toast popups */}
       <AnimatePresence>

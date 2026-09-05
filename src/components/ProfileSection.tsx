@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   User as UserType, 
-  Post 
+  Post,
+  Song
 } from '../types';
 import { 
   ShieldCheck, 
@@ -21,7 +22,14 @@ import {
   X,
   Camera,
   Bookmark,
-  LogIn
+  LogIn,
+  Upload,
+  Music,
+  Play,
+  Pause,
+  ArrowRight,
+  Phone,
+  Image as ImageIcon
 } from 'lucide-react';
 import siteLogo from '../assets/images/site_logo.jpg';
 
@@ -55,6 +63,11 @@ interface ProfileSectionProps {
   onShowToast: (message: string) => void;
   onOpenAuthModal?: () => void;
   savedPosts?: Post[];
+  onNavigateToFounderConsole?: () => void;
+  onNavigateToMusic?: () => void;
+  currentPlayingSong?: Song | null;
+  isPlaying?: boolean;
+  onToggleSong?: () => void;
 }
 
 export default function ProfileSection({ 
@@ -63,11 +76,18 @@ export default function ProfileSection({
   userPosts,
   onShowToast,
   onOpenAuthModal,
-  savedPosts = []
+  savedPosts = [],
+  onNavigateToFounderConsole,
+  onNavigateToMusic,
+  currentPlayingSong,
+  isPlaying,
+  onToggleSong
 }: ProfileSectionProps) {
   
   const [inviteEmail, setInviteEmail] = useState('');
   const [profileTab, setProfileTab] = useState<'posts' | 'saved'>('posts');
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const modalGalleryInputRef = useRef<HTMLInputElement>(null);
 
   // Edit Profile States
   const [isEditing, setIsEditing] = useState(false);
@@ -78,6 +98,45 @@ export default function ProfileSection({
   const [editAvatar, setEditAvatar] = useState(currentUser.avatar);
   const [editVerificationType, setEditVerificationType] = useState(currentUser.verificationType || 'Elite');
   const [editMembershipLevel, setEditMembershipLevel] = useState(currentUser.membershipLevel || 'Standard');
+
+  const isFounderUser = currentUser.username === 'jaswant_jaat' || currentUser.membershipLevel === 'Founder Board';
+
+  const handleDirectGalleryPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        onShowToast('⚠️ Photo ka size 5MB se kam hona chahiye.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          const photoUrl = reader.result;
+          setCurrentUser(prev => ({ ...prev, avatar: photoUrl }));
+          onShowToast('📸 Gallery se nayi profile photo safalta-purvak lag gayi hai!');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleModalGalleryPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        onShowToast('⚠️ Photo ka size 5MB se kam hona chahiye.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setEditAvatar(reader.result);
+          onShowToast('📸 Gallery se photo select ho gayi!');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleOpenEdit = () => {
     setEditName(currentUser.name);
@@ -149,17 +208,32 @@ export default function ProfileSection({
 
         {/* Profile Avatar and Name Block */}
         <div className="px-6 pb-6 pt-0 relative flex flex-col sm:flex-row items-start sm:items-end gap-5 -mt-12">
-          <div className="relative shrink-0">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-[3px] bg-gradient-to-tr from-amber-500 to-amber-600 shadow-md">
+          <div className="relative shrink-0 group">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-[3px] bg-gradient-to-tr from-amber-500 to-amber-600 shadow-md relative overflow-hidden">
               <img 
                 src={currentUser.avatar} 
                 alt={currentUser.name} 
                 className="w-full h-full rounded-full object-cover"
                 referrerPolicy="no-referrer"
               />
+              <label 
+                htmlFor="direct-gallery-avatar-upload"
+                className="absolute inset-0 bg-slate-950/65 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white"
+                title="Gallery se photo badlein"
+              >
+                <Camera className="w-6 h-6 text-amber-300" />
+                <span className="text-[9px] font-bold font-mono text-amber-200 mt-1">Photo Badlein</span>
+              </label>
+              <input 
+                id="direct-gallery-avatar-upload"
+                type="file" 
+                accept="image/*" 
+                onChange={handleDirectGalleryPhotoUpload}
+                className="hidden" 
+              />
             </div>
             {currentUser.isVerified && (
-              <span className="absolute bottom-1 right-1 bg-white rounded-full p-1 border border-amber-500/30 shadow-sm">
+              <span className="absolute bottom-1 right-1 bg-white rounded-full p-1 border border-amber-500/30 shadow-sm z-10">
                 <ShieldCheck className="w-5 h-5 text-amber-600 fill-transparent" />
               </span>
             )}
@@ -225,7 +299,141 @@ export default function ProfileSection({
         </div>
       </div>
 
-      {/* 2. Exclusive Membership Luxury Card and Onboarding Grid */}
+      {/* Founder Master Access Banner */}
+      {isFounderUser && (
+        <div className="rounded-3xl bg-gradient-to-r from-amber-600 via-amber-700 to-amber-900 text-white p-5 sm:p-6 shadow-xl border border-amber-400/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
+              <Crown className="w-7 h-7 text-amber-200" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="bg-amber-400/30 text-amber-200 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full uppercase">
+                  👑 SUPREME FOUNDER PORTAL
+                </span>
+              </div>
+              <h3 className="font-serif font-bold text-lg text-white mt-0.5">
+                Jaswant Jaat (Founder) - Sabhi Members Ka Confidential Data
+              </h3>
+              <p className="text-xs text-amber-100/90 mt-0.5">
+                Aap Jaat Samiti ke founder hain. Samast sadasyon ki details, numbers aur records dekhne ke liye Founder Console kholein.
+              </p>
+            </div>
+          </div>
+
+          {onNavigateToFounderConsole && (
+            <button
+              id="profile-open-founder-console-btn"
+              onClick={onNavigateToFounderConsole}
+              className="px-5 py-2.5 bg-white hover:bg-amber-50 text-slate-900 font-bold text-xs rounded-xl shadow-md transition-all active:scale-98 cursor-pointer flex items-center gap-2 whitespace-nowrap"
+            >
+              <span>Founder Console Kholein</span>
+              <ArrowRight className="w-4 h-4 text-amber-700" />
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* 2. Photo Gallery Upload & Profile Anthem Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {/* Dedicated Gallery Photo Section */}
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-amber-600" />
+                <span className="text-xs font-serif font-bold text-slate-900">Gallery Se Profile Photo Lagayein</span>
+              </div>
+              <span className="text-[9px] font-mono bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold">
+                GALLERY UPLOAD
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-normal mb-3">
+              Apne mobile phone ya computer ki gallery se koi bhi photo select karein. Ye turant aapki DP aur sabhi posts par lag jayegi.
+            </p>
+            <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-100 mb-3">
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-amber-500 shrink-0">
+                <img src={currentUser.avatar} alt="Current DP" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-slate-800">Live Profile Photo</span>
+                <span className="text-[10px] text-slate-500 font-mono">Tap below to pick from gallery</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button
+              onClick={() => galleryInputRef.current?.click()}
+              className="w-full py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Upload className="w-4 h-4" />
+              <span>📁 Gallery Se Nayi Photo Chunein</span>
+            </button>
+            <input 
+              ref={galleryInputRef}
+              type="file" 
+              accept="image/*" 
+              onChange={handleDirectGalleryPhotoUpload}
+              className="hidden" 
+            />
+          </div>
+        </div>
+
+        {/* Profile Anthem Song Card */}
+        <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Music className="w-4 h-4 text-rose-600" />
+                <span className="text-xs font-serif font-bold text-slate-900">Profile Anthem (Aapka Gana)</span>
+              </div>
+              <span className="text-[9px] font-mono bg-rose-50 text-rose-800 px-2 py-0.5 rounded border border-rose-200 font-bold">
+                HIGH BASS
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-normal mb-3">
+              Jab bhi koi aapki profile dekhega, ye gana play hoga. Gane section se aur bhi gaane laga sakte hain.
+            </p>
+            <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl border border-slate-100 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-800 font-bold">
+                <Music className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-bold text-slate-900 truncate">
+                  {currentUser.anthemSong || 'Systummm Pe Systummm (Haryanvi Bass)'}
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">Official Profile Track</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {onToggleSong && (
+              <button
+                onClick={onToggleSong}
+                className="flex-1 py-2 px-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                <span>{isPlaying ? 'Gana Pause Karein' : 'Gana Suney'}</span>
+              </button>
+            )}
+            {onNavigateToMusic && (
+              <button
+                onClick={onNavigateToMusic}
+                className="py-2 px-3 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1"
+              >
+                <span>Gane Section</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      {/* 3. Exclusive Membership Luxury Card and Onboarding Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Metallic Amex-style Card Visualizer */}
@@ -548,9 +756,38 @@ export default function ProfileSection({
                 </div>
               </div>
 
-              {/* Indian Portrait Presets Selection */}
+              {/* Gallery Photo Upload & Indian Portrait Presets Selection */}
               <div>
-                <label className="block text-slate-600 text-[10px] font-mono mb-2 uppercase font-semibold">Avatar Select Karein (Desi / Indian Portraits)</label>
+                <label className="block text-slate-600 text-[10px] font-mono mb-2 uppercase font-semibold">Profile Photo / Avatar Chunein</label>
+                
+                {/* 1. Direct Gallery Upload button */}
+                <div className="flex items-center gap-3 p-3 bg-amber-50/60 rounded-xl border border-amber-200/80 mb-3">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border border-amber-500 shrink-0">
+                    <img src={editAvatar} alt="Selected Avatar" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1">
+                    <button
+                      type="button"
+                      onClick={() => modalGalleryInputRef.current?.click()}
+                      className="w-full py-2 px-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>📁 Gallery Se Apni Photo Chunein</span>
+                    </button>
+                    <input 
+                      ref={modalGalleryInputRef}
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleModalGalleryPhotoUpload}
+                      className="hidden" 
+                    />
+                    <span className="text-[10px] text-slate-500 font-mono block mt-1 text-center">
+                      Phone / Computer gallery se upload karein
+                    </span>
+                  </div>
+                </div>
+
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-2">Ya Shahi Presets Me Se Chunein:</span>
                 <div className="grid grid-cols-4 gap-3 mb-3">
                   {AVATAR_PRESETS.map((preset) => (
                     <button
