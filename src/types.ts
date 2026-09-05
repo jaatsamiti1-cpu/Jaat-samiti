@@ -1,10 +1,10 @@
 export interface User {
-  id: string;
+  id?: string;
   name: string;
   username: string;
   avatar: string;
   isVerified: boolean;
-  verificationType?: 'Royal' | 'Business' | 'Elite' | 'Legend';
+  verificationType?: 'Royal' | 'Business' | 'Elite' | 'Legend' | 'Youth';
   membershipLevel: 'Gold Club' | 'Elite Patron' | 'Founder Board' | 'Standard';
   bio: string;
   location: string;
@@ -13,6 +13,7 @@ export interface User {
   invitesRemaining: number;
   invitesSent: Array<{ email: string; date: string; status: 'Pending' | 'Joined' }>;
   postsCount: number;
+  savedPostIds?: string[];
 }
 
 export interface Comment {
@@ -31,6 +32,7 @@ export interface Post {
   content: string;
   media: string[]; // Carousel support
   isVideo?: boolean; // Indicates if the post contains video content
+  videoUrl?: string;
   likes: number;
   hasLiked: boolean;
   comments: Comment[];
@@ -89,4 +91,36 @@ export interface Notification {
   timestamp: string;
   read: boolean;
   postId?: string;
+}
+
+export interface Story {
+  id: string;
+  userId: string;
+  userName: string;
+  userUsername: string;
+  userAvatar: string;
+  mediaUrl: string;
+  caption?: string;
+  timestamp: string;
+  hasSeen?: boolean;
+}
+
+export interface Reel {
+  id: string;
+  author: Partial<User>;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  caption: string;
+  songTitle: string;
+  likes: number;
+  comments: number;
+  shares: number;
+  hasLiked: boolean;
+  hasSaved?: boolean;
+}
+
+export interface RegisteredAccount extends User {
+  password?: string;
+  email?: string;
+  savedPostIds?: string[];
 }

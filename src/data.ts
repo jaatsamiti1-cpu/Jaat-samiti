@@ -1,4 +1,4 @@
-import { User, Post, Business, Leader, Notification } from './types';
+import { User, Post, Business, Leader, Notification, Story, Reel, RegisteredAccount } from './types';
 
 export const currentUser: User = {
   id: 'current_user_1',
@@ -377,5 +377,255 @@ export const initialChatMessages = [
   { id: '1', senderId: 'leader_3', receiverId: 'current_user_1', content: 'Jaswant bhai, kya aap agle Tuesday ko Gurgaon Business Conclave me aa rahe ho? Boards ke samne satellite metrics present karne hain.', timestamp: '10:14 AM', isEncrypted: true },
   { id: '2', senderId: 'current_user_1', receiverId: 'leader_3', content: 'Haan Vikram bhai, bilkul! Maine Ceres Robotics ke liye prime space allot kar diya hai. Board excited hai UP corridor expansion ke liye. VIP Lounge me milte hain.', timestamp: '10:18 AM', isEncrypted: true },
   { id: '3', senderId: 'leader_3', receiverId: 'current_user_1', content: 'Bahut badiya. Safe encrypted channel active hai yahan. Main data deck bhej raha hu.', timestamp: '10:19 AM', isEncrypted: true },
+];
+
+export const initialNotifications: Notification[] = [
+  {
+    id: 'notif_1',
+    type: 'like',
+    senderName: 'Nihal Jaat',
+    senderAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80',
+    message: 'ne aapki "Dharohar & Heritage" post ko like kiya.',
+    timestamp: '5 min pehle',
+    read: false,
+    postId: 'post_1'
+  },
+  {
+    id: 'notif_2',
+    type: 'follow',
+    senderName: 'Nitesh Jaat',
+    senderAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80',
+    message: 'ne aapko Samiti network par follow karna shuru kiya.',
+    timestamp: '28 min pehle',
+    read: false
+  },
+  {
+    id: 'notif_3',
+    type: 'verification_approve',
+    senderName: 'Elder Council Board',
+    senderAvatar: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=150&h=150&q=80',
+    message: 'Aapka Founder Board VIP badge verify ho chuka hai.',
+    timestamp: '2 ghante pehle',
+    read: false
+  },
+  {
+    id: 'notif_4',
+    type: 'comment',
+    senderName: 'Major General Yashvir Tomar',
+    senderAvatar: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=150&h=150&q=80',
+    message: 'ne aapke post par comment kiya: "Bohot bada garv hai! Mitti ki diwaro ki physics engineering is world-class."',
+    timestamp: '3 ghante pehle',
+    read: true,
+    postId: 'post_1'
+  },
+  {
+    id: 'notif_5',
+    type: 'business_match',
+    senderName: 'Ceres Robotics & 2 anya',
+    senderAvatar: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=150&h=150&q=80',
+    message: 'ne aapke Vyapaar profile aur investment requirements ko view kiya.',
+    timestamp: '1 din pehle',
+    read: true
+  }
+];
+
+export const defaultRegisteredAccounts: RegisteredAccount[] = [
+  {
+    id: 'current_user_1',
+    name: 'Jaswant Jaat',
+    username: 'jaswant_jaat',
+    email: 'jaswant@jaatsamiti.com',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=400&h=400&q=80',
+    isVerified: true,
+    verificationType: 'Elite',
+    membershipLevel: 'Founder Board',
+    bio: 'Venture Capitalist & Tech Investor | AgriTech & Real Estate | Haryana roots, global scale 👑',
+    location: 'New Delhi & London',
+    followersCount: 1420,
+    followingCount: 382,
+    invitesRemaining: 3,
+    invitesSent: [
+      { email: 'digvijay.ahlawat@gmail.com', date: '2026-06-15', status: 'Joined' },
+      { email: 'ananya.chaudhary@outlook.com', date: '2026-07-02', status: 'Pending' },
+    ],
+    postsCount: 12,
+    savedPostIds: ['post_1', 'post_2']
+  },
+  {
+    id: 'user_nihal',
+    name: 'Nihal Jaat',
+    username: 'nihal_jaat',
+    email: 'nihal@jaatsamiti.com',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&h=400&q=80',
+    isVerified: true,
+    verificationType: 'Royal',
+    membershipLevel: 'Founder Board',
+    bio: 'Founder Board | Sports & Akhada Patron | Preserving ancient wrestling & youth empowerment 🚩',
+    location: 'Rohtak & Chandigarh',
+    followersCount: 3890,
+    followingCount: 240,
+    invitesRemaining: 5,
+    invitesSent: [],
+    postsCount: 18,
+    savedPostIds: ['post_1']
+  },
+  {
+    id: 'user_nitesh',
+    name: 'Nitesh Jaat',
+    username: 'nitesh_jaat',
+    email: 'nitesh@jaatsamiti.com',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80',
+    isVerified: true,
+    verificationType: 'Legend',
+    membershipLevel: 'Founder Board',
+    bio: 'Founder Board | Automotive & Logistics Empire | Speed, Heritage & Brotherhood 🔥',
+    location: 'Gurugram & Western UP',
+    followersCount: 4520,
+    followingCount: 195,
+    invitesRemaining: 4,
+    invitesSent: [],
+    postsCount: 24,
+    savedPostIds: ['post_2']
+  },
+  {
+    id: 'user_ananya',
+    name: 'Dr. Ananya Chaudhary',
+    username: 'ananya_agritech',
+    email: 'ananya@agritech.org',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&h=400&q=80',
+    isVerified: true,
+    verificationType: 'Business',
+    membershipLevel: 'Elite Patron',
+    bio: 'Genetics Scientist & Biotech Founder | Organic Soil Regeneration & Drone Farming',
+    location: 'Meerut & Bangalore',
+    followersCount: 2150,
+    followingCount: 410,
+    invitesRemaining: 2,
+    invitesSent: [],
+    postsCount: 8,
+    savedPostIds: []
+  }
+];
+
+export const initialStories: Story[] = [
+  {
+    id: 'story_1',
+    userId: 'current_user_1',
+    userName: 'Jaswant Jaat',
+    userUsername: 'jaswant_jaat',
+    userAvatar: 'https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=400&h=400&q=80',
+    mediaUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80',
+    caption: 'Late night drive in the beast. Red eye glow on wet tracks. 🔥',
+    timestamp: '2h ago',
+    hasSeen: false
+  },
+  {
+    id: 'story_2',
+    userId: 'user_nihal',
+    userName: 'Nihal Jaat',
+    userUsername: 'nihal_jaat',
+    userAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&h=400&q=80',
+    mediaUrl: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=800&q=80',
+    caption: '5 AM Akhada routine. Mitti ki khushboo aur asli taakat! 🚩',
+    timestamp: '4h ago',
+    hasSeen: false
+  },
+  {
+    id: 'story_3',
+    userId: 'user_nitesh',
+    userName: 'Nitesh Jaat',
+    userUsername: 'nitesh_jaat',
+    userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80',
+    mediaUrl: 'https://images.unsplash.com/photo-1627581534960-9dfd4a2fa3ea?auto=format&fit=crop&w=800&q=80',
+    caption: 'Bharatpur Heritage meet. Remembering our invincible ancestors.',
+    timestamp: '6h ago',
+    hasSeen: false
+  },
+  {
+    id: 'story_4',
+    userId: 'user_ananya',
+    userName: 'Dr. Ananya',
+    userUsername: 'ananya_agritech',
+    userAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&h=400&q=80',
+    mediaUrl: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=800&q=80',
+    caption: 'Autonomous drone scouting 500 acres of high-yield crops today 🌾',
+    timestamp: '8h ago',
+    hasSeen: true
+  },
+  {
+    id: 'story_5',
+    userId: 'leader_3',
+    userName: 'Vikram Ahlawat',
+    userUsername: 'vikram_ahlawat',
+    userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80',
+    mediaUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
+    caption: 'B2B Conclave pitch deck finalized for European investors.',
+    timestamp: '11h ago',
+    hasSeen: true
+  }
+];
+
+export const initialReels: Reel[] = [
+  {
+    id: 'reel_1',
+    author: {
+      name: 'Nitesh Jaat',
+      username: 'nitesh_jaat',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400&q=80',
+      isVerified: true,
+      verificationType: 'Legend'
+    },
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-agriculture-tractor-spraying-crops-in-a-field-41584-large.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1595856417767-1750275988e0?auto=format&fit=crop&w=600&q=80',
+    caption: 'Khet me tractor ka zor aur mitti ka dum! Heavy duty agricultural pride in Haryana 🚜🌾 #JaatSystum #KisanPower',
+    songTitle: 'Systummm Pe Systummm • Haryanvi Bass Remix',
+    likes: 12450,
+    comments: 382,
+    shares: 890,
+    hasLiked: false,
+    hasSaved: false
+  },
+  {
+    id: 'reel_2',
+    author: {
+      name: 'Nihal Jaat',
+      username: 'nihal_jaat',
+      avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&h=400&q=80',
+      isVerified: true,
+      verificationType: 'Royal'
+    },
+    videoUrl: 'https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c054273f1e2474944983084c8a26222c&profile_id=139&oauth2_token_id=57447761',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=600&q=80',
+    caption: 'Asli taakat mitti ke akhade me banti hai. Hard work in the ring every single sunrise 💪🚩 #Akhada #Kushti #Dangal',
+    songTitle: 'Dangal Title Track • Daler Mehndi',
+    likes: 18920,
+    comments: 512,
+    shares: 1420,
+    hasLiked: true,
+    hasSaved: true
+  },
+  {
+    id: 'reel_3',
+    author: {
+      name: 'Jaswant Jaat',
+      username: 'jaswant_jaat',
+      avatar: 'https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=400&h=400&q=80',
+      isVerified: true,
+      verificationType: 'Elite'
+    },
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-harvesting-wheat-with-a-modern-combine-harvester-41583-large.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80',
+    caption: 'Golden wheat harvest season. High-tech harvesting fleet operating at peak efficiency 🌾 #AgriEmpire #Haryana',
+    songTitle: 'Kisan Anthem • Diljit & Kanwar Grewal',
+    likes: 9840,
+    comments: 215,
+    shares: 630,
+    hasLiked: false,
+    hasSaved: false
+  }
 ];
 

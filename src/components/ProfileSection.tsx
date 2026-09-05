@@ -19,10 +19,17 @@ import {
   Key,
   Settings,
   X,
-  Camera
+  Camera,
+  Bookmark,
+  LogIn
 } from 'lucide-react';
+import siteLogo from '../assets/images/site_logo.jpg';
 
 const AVATAR_PRESETS = [
+  {
+    name: 'Devil BMW Car (Logo)',
+    url: siteLogo
+  },
   {
     name: 'Royal Sadasya (Young Male)',
     url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&h=400&q=80'
@@ -46,16 +53,21 @@ interface ProfileSectionProps {
   setCurrentUser: React.Dispatch<React.SetStateAction<UserType>>;
   userPosts: Post[];
   onShowToast: (message: string) => void;
+  onOpenAuthModal?: () => void;
+  savedPosts?: Post[];
 }
 
 export default function ProfileSection({ 
   currentUser, 
   setCurrentUser, 
   userPosts,
-  onShowToast
+  onShowToast,
+  onOpenAuthModal,
+  savedPosts = []
 }: ProfileSectionProps) {
   
   const [inviteEmail, setInviteEmail] = useState('');
+  const [profileTab, setProfileTab] = useState<'posts' | 'saved'>('posts');
 
   // Edit Profile States
   const [isEditing, setIsEditing] = useState(false);
@@ -174,6 +186,16 @@ export default function ProfileSection({
                   <Settings className="w-3.5 h-3.5 animate-[spin_10s_linear_infinite] text-amber-600" />
                   <span>Modify Profile</span>
                 </button>
+
+                {onOpenAuthModal && (
+                  <button 
+                    onClick={onOpenAuthModal}
+                    className="flex items-center gap-1.5 text-[10px] font-mono font-bold bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-xl cursor-pointer outline-none transition-all active:scale-95 self-start sm:self-auto shadow-2xs"
+                  >
+                    <LogIn className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Switch / Naya ID Banayein</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -339,39 +361,90 @@ export default function ProfileSection({
         </div>
       </div>
 
-      {/* 4. Grid of user posts */}
+      {/* 4. Instagram Tabs: Published Posts vs Saved Posts */}
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-          <Grid className="w-4 h-4 text-amber-600" />
-          <h3 className="font-serif text-sm font-bold text-slate-900">Aapke Published Milestones</h3>
+        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setProfileTab('posts')}
+              className={`flex items-center gap-2 text-xs font-serif font-bold pb-1 transition-colors border-b-2 cursor-pointer ${
+                profileTab === 'posts'
+                  ? 'border-amber-600 text-amber-900'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <Grid className="w-4 h-4" />
+              <span>Published Posts ({userPosts.filter(p => p.author.username === currentUser.username).length})</span>
+            </button>
+
+            <button
+              onClick={() => setProfileTab('saved')}
+              className={`flex items-center gap-2 text-xs font-serif font-bold pb-1 transition-colors border-b-2 cursor-pointer ${
+                profileTab === 'saved'
+                  ? 'border-amber-600 text-amber-900'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <Bookmark className="w-4 h-4" />
+              <span>Saved Posts ({savedPosts.length})</span>
+            </button>
+          </div>
         </div>
 
-        {userPosts.filter(p => p.author.username === currentUser.username).length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500 text-xs font-mono">
-            Aapne is session me abhi tak koi post share nahi kiya hai. Home Feed par banayein.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {userPosts.filter(p => p.author.username === currentUser.username).map((post) => (
-              <div key={post.id} className="rounded-2xl bg-white border border-slate-200 p-4 hover:border-slate-300 transition-all shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[9px] font-mono uppercase bg-amber-50 text-amber-900 border border-amber-200 font-bold px-2 py-0.5 rounded">
-                    {post.category}
-                  </span>
-                  <span className="text-[9px] text-slate-400 font-mono">{post.timestamp}</span>
+        {profileTab === 'posts' ? (
+          userPosts.filter(p => p.author.username === currentUser.username).length === 0 ? (
+            <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500 text-xs font-mono">
+              Aapne abhi tak koi post share nahi kiya hai. Home Feed par ya "+ Create Post" se banayein.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {userPosts.filter(p => p.author.username === currentUser.username).map((post) => (
+                <div key={post.id} className="rounded-2xl bg-white border border-slate-200 p-4 hover:border-slate-300 transition-all shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[9px] font-mono uppercase bg-amber-50 text-amber-900 border border-amber-200 font-bold px-2 py-0.5 rounded">
+                      {post.category}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-mono">{post.timestamp}</span>
+                  </div>
+                  <p className="text-slate-800 text-xs line-clamp-3 mb-3">{post.content}</p>
+                  {post.media.length > 0 && (
+                    <img 
+                      src={post.media[0]} 
+                      alt="Post media" 
+                      className="w-full h-28 object-cover rounded-xl border border-slate-100"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
                 </div>
-                <p className="text-slate-800 text-xs line-clamp-3 mb-3">{post.content}</p>
-                {post.media.length > 0 && (
-                  <img 
-                    src={post.media[0]} 
-                    alt="Post media" 
-                    className="w-full h-24 object-cover rounded-xl border border-slate-100"
-                    referrerPolicy="no-referrer"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
+        ) : (
+          savedPosts.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500 text-xs font-mono">
+              Koi saved posts nahi hain. Feed ya Reels me bookmark icon tap karein.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {savedPosts.map((post) => (
+                <div key={post.id} className="rounded-2xl bg-white border border-slate-200 p-4 hover:border-slate-300 transition-all shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-slate-900">@{post.author.username}</span>
+                    <span className="text-[9px] text-slate-400 font-mono">{post.timestamp}</span>
+                  </div>
+                  <p className="text-slate-800 text-xs line-clamp-2 mb-3">{post.content}</p>
+                  {post.media.length > 0 && (
+                    <img 
+                      src={post.media[0]} 
+                      alt="Saved post" 
+                      className="w-full h-28 object-cover rounded-xl border border-slate-100"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )
         )}
       </div>
 

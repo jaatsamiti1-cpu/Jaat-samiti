@@ -14,9 +14,12 @@ import {
   ChevronRight,
   Share2,
   Check,
-  Video
+  Video,
+  Bookmark
 } from 'lucide-react';
-import { Post, Comment, User } from '../types';
+import { Post, Comment, User, Story } from '../types';
+import StoriesBar from './StoriesBar';
+import siteLogo from '../assets/images/site_logo.jpg';
 
 interface FeedSectionProps {
   posts: Post[];
@@ -25,6 +28,11 @@ interface FeedSectionProps {
   onShowToast: (message: string) => void;
   followedUsernames: string[];
   onToggleFollow: (username: string, authorName: string) => void;
+  stories?: Story[];
+  onOpenStory?: (index: number) => void;
+  onAddStory?: (newStory: Story) => void;
+  savedPostIds?: string[];
+  onToggleSavePost?: (postId: string) => void;
 }
 
 export default function FeedSection({ 
@@ -33,7 +41,12 @@ export default function FeedSection({
   currentUser,
   onShowToast,
   followedUsernames = [],
-  onToggleFollow
+  onToggleFollow,
+  stories = [],
+  onOpenStory,
+  onAddStory,
+  savedPostIds = [],
+  onToggleSavePost
 }: FeedSectionProps) {
   
   // New Post Creator States
@@ -57,6 +70,7 @@ export default function FeedSection({
 
   // High-res mock image presets for creating new posts
   const imagePresets = [
+    { id: 'devilcar', label: 'Devil BMW Car (Logo)', url: siteLogo },
     { id: 'heritage', label: 'Lohagarh Fort', url: 'https://images.unsplash.com/photo-1627581534960-9dfd4a2fa3ea?auto=format&fit=crop&w=1000&q=80' },
     { id: 'agritech', label: 'AgriTech', url: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=1000&q=80' },
     { id: 'achievement', label: 'Sports Arena', url: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&w=1000&q=80' },
@@ -212,6 +226,17 @@ export default function FeedSection({
   return (
     <div id="feed-container" className="flex flex-col gap-6 max-w-2xl mx-auto pb-24 md:pb-6 select-none">
       
+      {/* 0. Instagram Stories Tray */}
+      {stories.length > 0 && onOpenStory && onAddStory && (
+        <StoriesBar
+          stories={stories}
+          currentUser={currentUser}
+          onOpenStory={onOpenStory}
+          onAddStory={onAddStory}
+          onShowToast={onShowToast}
+        />
+      )}
+
       {/* 1. Header Banner */}
       <div className="rounded-2xl bg-white border border-slate-200 p-5 flex items-center justify-between shadow-sm">
         <div className="flex flex-col">
@@ -552,14 +577,28 @@ export default function FeedSection({
                   </button>
                 </div>
 
-                {/* Share Link */}
-                <button 
-                  onClick={() => handleSharePost(post.id)}
-                  className="flex items-center gap-1.5 text-xs font-display hover:text-slate-900 outline-none cursor-pointer"
-                >
-                  <Send className="w-4 h-4" />
-                  <span className="hidden sm:inline">Secure Bhejein</span>
-                </button>
+                {/* Share Link & Bookmark */}
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => handleSharePost(post.id)}
+                    className="flex items-center gap-1.5 text-xs font-display hover:text-slate-900 outline-none cursor-pointer"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span className="hidden sm:inline">Secure Bhejein</span>
+                  </button>
+
+                  {onToggleSavePost && (
+                    <button
+                      onClick={() => onToggleSavePost(post.id)}
+                      className="flex items-center text-xs font-display hover:text-slate-900 outline-none cursor-pointer p-1"
+                      title={savedPostIds.includes(post.id) ? 'Saved' : 'Save post'}
+                    >
+                      <Bookmark className={`w-4.5 h-4.5 transition-colors ${
+                        savedPostIds.includes(post.id) ? 'fill-amber-600 text-amber-600' : 'text-slate-500'
+                      }`} />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Collapsible Comments Section */}
