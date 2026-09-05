@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Rozha+One&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Rozha One", "Cinzel", Georgia, serif;
+  --font-display: "Montserrat", sans-serif;
+}
+
+/* Custom keyframes for premium animations if needed */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Custom Desi Royal White Theme Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d97706;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b45309;
+}
+
+/* Royal Background Pattern & Overlay */
+.desi-luxury-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
+}
+
+.royal-gold-border {
+  border-color: rgba(217, 119, 6, 0.25);
+}
+
+.royal-gold-border:hover {
+  border-color: rgba(217, 119, 6, 0.5);
+}
+
+.gold-glow {
+  box-shadow: 0 4px 20px rgba(217, 119, 6, 0.12);
+}
+
+.gold-text-gradient {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #92400e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+

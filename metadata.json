@@ -1,0 +1,6 @@
+{
+  "name": "Jaat samiti (Jaswant Jaat and Nihal Jaat)",
+  "description": "A premium, high-end social network tailored for the Jaat community, featuring an Instagram-style visual feed, heritage highlights, professional directories, and elite member verification.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
