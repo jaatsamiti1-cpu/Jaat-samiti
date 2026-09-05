@@ -11,6 +11,7 @@ import {
   Search
 } from 'lucide-react';
 import { User as UserType } from '../types';
+import jaatLogo from '../assets/images/jaat_samiti_logo_1785940752383.jpg';
 
 interface SidebarProps {
   currentTab: string;
@@ -49,7 +50,7 @@ export default function Sidebar({
           <div className="flex items-center gap-3 px-2">
             <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 via-amber-600 to-yellow-600 p-[2px] shadow-sm shrink-0 overflow-hidden">
               <img 
-                src="/src/assets/images/jaat_samiti_logo_1785940752383.jpg" 
+                src={jaatLogo} 
                 alt="Jaat Samiti Logo" 
                 className="w-full h-full object-cover rounded-full"
                 referrerPolicy="no-referrer"

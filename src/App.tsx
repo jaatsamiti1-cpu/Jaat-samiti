@@ -33,6 +33,7 @@ import DirectorySection from './components/DirectorySection';
 import ProfileSection from './components/ProfileSection';
 import RightSidebar from './components/RightSidebar';
 import DMsDrawer from './components/DMsDrawer';
+import jaatLogo from './assets/images/jaat_samiti_logo_1785940752383.jpg';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('feed');
@@ -244,7 +245,7 @@ export default function App() {
           >
             <div className="flex items-center gap-2.5">
               <img 
-                src="/src/assets/images/jaat_samiti_logo_1785940752383.jpg" 
+                src={jaatLogo} 
                 alt="Jaat Samiti Logo" 
                 className="w-8 h-8 rounded-full object-cover border border-amber-500/40 shrink-0"
                 referrerPolicy="no-referrer"
